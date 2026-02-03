@@ -4,9 +4,21 @@
     {
       "src": "index.html",
       "use": "@vercel/static"
+    },
+    {
+      "src": "btp-tracker.js",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
+    {
+      "src": "/data/(.*)",
+      "dest": "/data/$1"
+    },
+    {
+      "src": "/btp-tracker.js",
+      "dest": "/btp-tracker.js"
+    },
     {
       "src": "/(.*)",
       "dest": "/index.html"
