@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTP Tracker - Rendimenti Titoli di Stato Italiani</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="btp-tracker.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+        .yield-positive { color: #10b981; }
+        .yield-negative { color: #ef4444; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-6 shadow-lg">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold">📈 BTP Tracker</h1>
+                    <p class="text-purple-100 mt-1">Rendimenti Titoli di Stato Italiani - Dati in Tempo Reale</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm text-purple-200">Ultimo aggiornamento</p>
+                    <p id="lastUpdate" class="font-semibold">--:--</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Filters -->
+    <div class="container mx-auto px-4 py-6">
+        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+            <h2 class="text-lg font-semibold mb-4 text-gray-800">🔍 Filtri Ricerca</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tipo Titolo</label>
+                    <select id="tipoFilter" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        <option value="">Tutti</option>
+                        <option value="BTP">BTP</option>
+                        <option value="BOT">BOT</option>
+                        <option value="BTP Italia">BTP Italia</option>
+                        <option value="BTP Valore">BTP Valore</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Scadenza</label>
+                    <select id="scadenzaFilter" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        <option value="">Tutte</option>
+                        <option value="1">1 anno</option>
+                        <option value="3">3 anni</option>
+                        <option value="5">5 anni</option>
+                        <option value="10">10 anni</option>
+                        <option value="30">30 anni</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Rendimento Minimo</label>
+                    <input type="number" id="rendimentoFilter" placeholder="Es. 3.5" step="0.1" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+                <div class="flex items-end">
+                    <button onclick="applyFilters()" class="w-full bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors font-medium">
+                        Applica Filtri
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover transition-all duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Titoli Monitorati</p>
+                        <p id="totalTitoli" class="text-3xl font-bold text-gray-800 mt-1">--</p>
+                    </div>
+                    <div class="bg-purple-100 p-3 rounded-full">
+                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover transition-all duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Rendimento Medio</p>
+                        <p id="rendimentoMedio" class="text-3xl font-bold text-gray-800 mt-1">--</p>
+                    </div>
+                    <div class="bg-green-100 p-3 rounded-full">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover transition-all duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Miglior Rendimento</p>
+                        <p id="migliorRendimento" class="text-3xl font-bold text-green-600 mt-1">--</p>
+                    </div>
+                    <div class="bg-yellow-100 p-3 rounded-full">
+                        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6 card-hover transition-all duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Nuove Emissioni</p>
+                        <p id="nuoveEmissioni" class="text-3xl font-bold text-blue-600 mt-1">--</p>
+                    </div>
+                    <div class="bg-blue-100 p-3 rounded-full">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Yield Curve Chart -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+            <h2 class="text-lg font-semibold mb-4 text-gray-800">📊 Curva dei Rendimenti</h2>
+            <div class="h-80">
+                <canvas id="yieldCurve"></canvas>
+            </div>
+        </div>
+
+        <!-- Bonds Table -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <h2 class="text-lg font-semibold mb-4 text-gray-800">💰 Lista Titoli</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-gray-200">
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Codice ISIN</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Tipo</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Scadenza</th>
+                            <th class="text-right py-3 px-4 font-semibold text-gray-700">Prezzo</th>
+                            <th class="text-right py-3 px-4 font-semibold text-gray-700">Rendimento Lordo</th>
+                            <th class="text-right py-3 px-4 font-semibold text-gray-700">Rendimento Netto</th>
+                            <th class="text-right py-3 px-4 font-semibold text-gray-700">Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bondsTable">
+                        <tr>
+                            <td colspan="7" class="text-center py-8 text-gray-500">
+                                <div class="flex flex-col items-center">
+                                    <svg class="animate-spin h-8 w-8 text-purple-600 mb-2" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Caricamento dati in corso...
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Upcoming Auctions -->
+        <div class="bg-white rounded-xl shadow-md p-6 mt-6">
+            <h2 class="text-lg font-semibold mb-4 text-gray-800">🗓️ Prossime Aste</h2>
+            <div id="auctions" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center text-gray-500">
+                    <svg class="animate-spin h-8 w-8 text-purple-600 mx-auto mb-2" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Caricamento aste...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400">Dati forniti da Borsa Italiana - MOT</p>
+            <p class="text-sm text-gray-500 mt-2">© 2026 BTP Tracker - Non costituisce consiglio di investimento</p>
+        </div>
+    </footer>
+
+    <script>
+        // Sample data - will be replaced with real API data
+        const sampleBonds = [
+            { isin: 'IT0005518128', tipo: 'BTP', scadenza: '2026-03-01', prezzo: 99.50, rendimentoLordo: 3.75, rendimentoNetto: 2.85, duration: 1.2 },
+            { isin: 'IT0005485708', tipo: 'BTP', scadenza: '2028-09-01', prezzo: 98.20, rendimentoLordo: 3.95, rendimentoNetto: 2.99, duration: 4.5 },
+            { isin: 'IT0005435319', tipo: 'BTP', scadenza: '2033-12-01', prezzo: 96.80, rendimentoLordo: 4.15, rendimentoNetto: 3.14, duration: 7.8 },
+            { isin: 'IT0005416545', tipo: 'BTP Italia', scadenza: '2029-03-27', prezzo: 101.30, rendimentoLordo: 3.85, rendimentoNetto: 2.91, duration: 5.2 },
+            { isin: 'IT0005424261', tipo: 'BOT', scadenza: '2026-06-30', prezzo: 98.90, rendimentoLordo: 3.65, rendimentoNetto: 2.77, duration: 0.5 },
+            { isin: 'IT0005518144', tipo: 'BTP Valore', scadenza: '2030-05-01', prezzo: 99.80, rendimentoLordo: 4.25, rendimentoNetto: 3.21, duration: 6.1 },
+        ];
+
+        const sampleAuctions = [
+            { data: '2026-02-07', tipo: 'BOT 6 mesi', importo: '8.5 mld €' },
+            { data: '2026-02-11', tipo: 'BTP 3 anni', importo: '2.5 mld €' },
+            { data: '2026-02-13', tipo: 'BTP 10 anni', importo: '3.0 mld €' },
+        ];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateLastUpdate();
+            renderBonds(sampleBonds);
+            renderStats(sampleBonds);
+            renderYieldCurve(sampleBonds);
+            renderAuctions(sampleAuctions);
+        });
+
+        function updateLastUpdate() {
+            const now = new Date();
+            document.getElementById('lastUpdate').textContent = now.toLocaleTimeString('it-IT');
+        }
+
+        function renderBonds(bonds) {
+            const tbody = document.getElementById('bondsTable');
+            tbody.innerHTML = bonds.map(bond => `
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <td class="py-3 px-4 font-mono text-sm text-gray-800">${bond.isin}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">${bond.tipo}</span>
+                    </td>
+                    <td class="py-3 px-4 text-gray-700">${formatDate(bond.scadenza)}</td>
+                    <td class="py-3 px-4 text-right font-medium text-gray-800">€${bond.prezzo.toFixed(2)}</td>
+                    <td class="py-3 px-4 text-right font-semibold text-gray-800">${bond.rendimentoLordo.toFixed(2)}%</td>
+                    <td class="py-3 px-4 text-right font-semibold yield-positive">${bond.rendimentoNetto.toFixed(2)}%</td>
+                    <td class="py-3 px-4 text-right text-gray-600">${bond.duration.toFixed(1)} anni</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderStats(bonds) {
+            document.getElementById('totalTitoli').textContent = bonds.length;
+            
+            const avgYield = bonds.reduce((sum, b) => sum + b.rendimentoNetto, 0) / bonds.length;
+            document.getElementById('rendimentoMedio').textContent = avgYield.toFixed(2) + '%';
+            
+            const maxYield = Math.max(...bonds.map(b => b.rendimentoNetto));
+            document.getElementById('migliorRendimento').textContent = maxYield.toFixed(2) + '%';
+            
+            document.getElementById('nuoveEmissioni').textContent = sampleAuctions.length;
+        }
+
+        function renderYieldCurve(bonds) {
+            const ctx = document.getElementById('yieldCurve').getContext('2d');
+            
+            const sortedBonds = [...bonds].sort((a, b) => new Date(a.scadenza) - new Date(b.scadenza));
+            const labels = sortedBonds.map(b => {
+                const years = Math.floor((new Date(b.scadenza) - new Date()) / (365.25 * 24 * 60 * 60 * 1000));
+                return years > 0 ? `${years}a` : 'Now';
+            });
+            const yields = sortedBonds.map(b => b.rendimentoNetto);
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Rendimento Netto (%)',
+                        data: yields,
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#8b5cf6',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toFixed(1) + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderAuctions(auctions) {
+            const container = document.getElementById('auctions');
+            container.innerHTML = auctions.map(auction => `
+                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-gray-500">${formatDate(auction.data)}</span>
+                        <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">ASTA</span>
+                    </div>
+                    <h3 class="font-semibold text-gray-800 mb-1">${auction.tipo}</h3>
+                    <p class="text-sm text-gray-600">${auction.importo}</p>
+                </div>
+            `).join('');
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        function applyFilters() {
+            // Placeholder for filter logic
+            alert('Filtri applicati! (Funzionalità da implementare con API reale)');
+        }
+    </script>
+</body>
+</html>

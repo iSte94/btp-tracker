@@ -1,0 +1,164 @@
+{
+  "lastUpdate": "2026-02-03T11:15:00.000Z",
+  "btps": [
+    {
+      "isin": "IT0001086567",
+      "description": "BTP Nov26 7.25%",
+      "type": "BTP",
+      "price": 103.767,
+      "coupon": 3.625,
+      "expiry": "2026-11-01",
+      "grossYield": "3.45",
+      "netYield": "3.02"
+    },
+    {
+      "isin": "IT0001174611",
+      "description": "BTP Nov27 6.5%",
+      "type": "BTP",
+      "price": 107.31,
+      "coupon": 3.25,
+      "expiry": "2027-11-01",
+      "grossYield": "3.52",
+      "netYield": "3.08"
+    },
+    {
+      "isin": "IT0001278511",
+      "description": "BTP Nov29 5.25%",
+      "type": "BTP",
+      "price": 109.67,
+      "coupon": 2.625,
+      "expiry": "2029-11-01",
+      "grossYield": "3.38",
+      "netYield": "2.96"
+    },
+    {
+      "isin": "IT0001444378",
+      "description": "BTP May31 6.0%",
+      "type": "BTP",
+      "price": 115.67,
+      "coupon": 3.00,
+      "expiry": "2031-05-01",
+      "grossYield": "3.65",
+      "netYield": "3.19"
+    },
+    {
+      "isin": "IT0003256820",
+      "description": "BTP Feb33 5.75%",
+      "type": "BTP",
+      "price": 116.83,
+      "coupon": 2.875,
+      "expiry": "2033-02-01",
+      "grossYield": "3.72",
+      "netYield": "3.26"
+    },
+    {
+      "isin": "IT0003535157",
+      "description": "BTP Aug34 5.0%",
+      "type": "BTP",
+      "price": 112.80,
+      "coupon": 2.50,
+      "expiry": "2034-08-01",
+      "grossYield": "3.55",
+      "netYield": "3.11"
+    },
+    {
+      "isin": "IT0005402368",
+      "description": "BTP Sep28 4.75%",
+      "type": "BTP",
+      "price": 108.50,
+      "coupon": 2.375,
+      "expiry": "2028-09-01",
+      "grossYield": "3.42",
+      "netYield": "2.99"
+    },
+    {
+      "isin": "IT0005430121",
+      "description": "BTP Mar30 4.5%",
+      "type": "BTP",
+      "price": 106.20,
+      "coupon": 2.25,
+      "expiry": "2030-03-01",
+      "grossYield": "3.48",
+      "netYield": "3.05"
+    }
+  ],
+  "bots": [
+    {
+      "isin": "IT0005689887",
+      "description": "BOT Zc Jan27 A",
+      "type": "BOT",
+      "price": 98.067,
+      "expiry": "2027-01-14",
+      "grossYield": "2.02",
+      "netYield": "1.77"
+    },
+    {
+      "isin": "IT0005684888",
+      "description": "BOT Zc Dec26 A",
+      "type": "BOT",
+      "price": 98.254,
+      "expiry": "2026-12-14",
+      "grossYield": "1.97",
+      "netYield": "1.72"
+    },
+    {
+      "isin": "IT0005678492",
+      "description": "BOT Zc Nov26 A",
+      "type": "BOT",
+      "price": 98.423,
+      "expiry": "2026-11-13",
+      "grossYield": "2.02",
+      "netYield": "1.77"
+    },
+    {
+      "isin": "IT0005674335",
+      "description": "BOT Zc Oct26 A",
+      "type": "BOT",
+      "price": 98.597,
+      "expiry": "2026-10-14",
+      "grossYield": "2.14",
+      "netYield": "1.87"
+    },
+    {
+      "isin": "IT0005669269",
+      "description": "BOT Zc Sep26 A",
+      "type": "BOT",
+      "price": 98.767,
+      "expiry": "2026-09-14",
+      "grossYield": "2.13",
+      "netYield": "1.86"
+    },
+    {
+      "isin": "IT0005666851",
+      "description": "BOT Zc Aug26 A",
+      "type": "BOT",
+      "price": 98.937,
+      "expiry": "2026-08-14",
+      "grossYield": "1.98",
+      "netYield": "1.73"
+    },
+    {
+      "isin": "IT0005660029",
+      "description": "BOT Zc Jul26 A",
+      "type": "BOT",
+      "price": 99.118,
+      "expiry": "2026-07-14",
+      "grossYield": "1.93",
+      "netYield": "1.69"
+    },
+    {
+      "isin": "IT0005655037",
+      "description": "BOT Zc Jun26 A",
+      "type": "BOT",
+      "price": 99.291,
+      "expiry": "2026-06-12",
+      "grossYield": "1.93",
+      "netYield": "1.69"
+    }
+  ],
+  "summary": {
+    "totalBTPs": 8,
+    "totalBOTs": 8,
+    "avgYield": "2.85"
+  }
+}

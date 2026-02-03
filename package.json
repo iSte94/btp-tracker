@@ -1,0 +1,12 @@
+{
+  "name": "btp-tracker",
+  "version": "1.0.0",
+  "description": "BTP Tracker - Monitoraggio rendimenti titoli di stato italiani",
+  "scripts": {
+    "scrape": "node scrape-data.js",
+    "start": "python3 -m http.server 8080"
+  },
+  "keywords": ["btp", "bot", "titoli di stato", "finance"],
+  "author": "Pixel",
+  "license": "MIT"
+}
